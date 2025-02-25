@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { MailIcon } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 import { useRouter } from 'next/navigation'
 
