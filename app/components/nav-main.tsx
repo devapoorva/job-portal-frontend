@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/collapsible"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,6 +16,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export function NavMain({
   items,
@@ -32,15 +34,16 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const pathname = usePathname();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      {/* <SidebarGroupLabel>Platform</SidebarGroupLabel> */}
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
             key={item.title}
             asChild
-            defaultOpen={item.isActive}
+            defaultOpen={item.items?.some((subItem) => pathname === subItem.url)}
             className="group/collapsible"
           >
             <SidebarMenuItem>
@@ -56,9 +59,17 @@ export function NavMain({
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
                       <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
+                      <Link
+                        href={subItem.url}
+                        className={cn(
+                          "block px-4 py-2 rounded-md transition",
+                          pathname === subItem.url &&
+                          "bg-neutral-200 dark:bg-neutral-800" 
+                           
+                        )}
+                      >
+                        <span>{subItem.title}</span>
+                      </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
