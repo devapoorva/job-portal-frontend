@@ -15,8 +15,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import "../globals.css";
-import {AuthContextProvider, useAuth} from "@/lib/context/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider"
+import {useAuth} from "@/lib/context/AuthContext";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import {useEffect} from "react";
 import {useRouter} from "next/navigation";
