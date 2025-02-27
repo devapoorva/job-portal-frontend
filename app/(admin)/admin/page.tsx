@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useAuth } from "@/lib/context/AuthContext"
 import { useState } from "react";
 export default function Page() {
-  const {user} = useAuth();
+const {user} = useAuth();
 const [open,setOpen] = useState(false);
 const openDialog =()=>{
   setOpen(true)

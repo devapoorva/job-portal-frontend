@@ -1,13 +1,19 @@
-"use client"
+"use client";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { GoogleAuthProvider, User, onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
+import { 
+  GoogleAuthProvider, 
+  User, 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  signOut 
+} from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  error:Error | null;
-  handleSignWithEmailPasssword: () => Promise<void>;
+  error: Error | null;
+  handleGoogleSignIn: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -18,47 +24,42 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setLoading(true);
-        if (currentUser) {
-            setUser(currentUser)
-            setLoading(false);
-        }else{
-            setUser(null)
-            setLoading(false);
-        }
-      
+      setUser(currentUser);
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  const handleSignWithEmailPasssword = async ()=>{
-    setLoading(true)
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError(null); // Reset error before attempting sign-in
     try {
-        await signInWithPopup(auth,new GoogleAuthProvider())
+      await signInWithPopup(auth, new GoogleAuthProvider());
     } catch (error) {
-        setError(error as Error)
+      setError(error as Error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
-  }
+  };
 
   const logout = async () => {
-    setLoading(true)
+    setLoading(true);
+    setError(null);
     try {
-        await signOut(auth);
+      await signOut(auth);
+      setUser(null);
     } catch (error) {
-        setError(error as Error) 
+      setError(error as Error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false)
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error,logout,handleSignWithEmailPasssword }}>
+    <AuthContext.Provider value={{ user, loading, error, logout, handleGoogleSignIn }}>
       {children}
     </AuthContext.Provider>
   );
