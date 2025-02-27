@@ -33,17 +33,13 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "State",
-          url: "/admin/state",
-        },
-        {
-          title: "City",
-          url: "/admin/city",
-        },
-        {
           title: "Zone",
           url: "/admin/zone",
         },
+        {
+          title: "Chapter",
+          url: "/admin/chapter",
+        }
       ],
     },
 
