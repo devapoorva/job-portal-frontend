@@ -1,5 +1,5 @@
 export type ZoneType ={
     id:number
     name:string
-    country:string
+    country:string | number
 }

@@ -30,7 +30,7 @@ export default function CustomCard({
       )}
 
       <CardContent>
-        <p>{children}</p>
+       {children}
       </CardContent>
       {footer && (
         <CardFooter>

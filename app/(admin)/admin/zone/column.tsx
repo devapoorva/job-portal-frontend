@@ -28,15 +28,15 @@ export const getColumns = (
     cell: ({ row }) => (
       <div className="flex gap-2">
         <Button
-          variant="outline"
-          size="icon"
+          variant="ghost"
+          size="sm"
           onClick={() => onEditClick(row.original)}
         >
           <FilePenLine />
         </Button>
         <Button
-          variant="outline"
-          size="icon"
+          variant="ghost"
+          size="sm"
           onClick={() => onDeleteClick(row.original.id)}
         >
           <ArchiveX color="red" />

@@ -8,6 +8,7 @@ import { CustomDialog } from "@/components/shard/custom-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { zoneSchema } from "@/lib/schema/zone";
 import {
   Form,
   FormControl,
@@ -25,27 +26,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const formSchema = z.object({
-  name: z.string().min(2).max(50),
-  country: z.string(),
-});
-
 export default function Zone() {
   const [zones, setZones] = useState<ZoneType[]>([
     { id: 1, name: "Test", country: "test country" },
   ]);
   const [isAdd, setIsAdd] = useState<boolean>(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-    },
+  const form = useForm<z.infer<typeof zoneSchema>>({
+    resolver: zodResolver(zoneSchema),
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: z.infer<typeof zoneSchema>) {
     console.log(values);
     setIsAdd(false);
+    setZones([...zones,{id:zones.length+1,name:values.name,country:values.country}])
   }
 
   const handleEditClick = (user: ZoneType) => {
