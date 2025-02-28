@@ -34,6 +34,9 @@ export default function Zone() {
 
   const form = useForm<z.infer<typeof zoneSchema>>({
     resolver: zodResolver(zoneSchema),
+    defaultValues: {
+      name: "",
+    },
   });
 
   function onSubmit(values: z.infer<typeof zoneSchema>) {
@@ -51,6 +54,7 @@ export default function Zone() {
   };
   const addNew = () => {
     setIsAdd(true);
+    form.reset();
   };
   return (
     <div className="px-1 py-1 w-full">
