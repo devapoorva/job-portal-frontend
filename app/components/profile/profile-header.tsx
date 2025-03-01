@@ -55,9 +55,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <BadgeCheck className="text-blue-500 w-5 h-5" />
         </div>
         <p>{title}</p>
-        <p className="text-sm">{location}</p>
-
-        {/* Company & University */}
+        <p className="text-sm text-gray-500">{location}</p>
         <div className="flex flex-wrap items-center gap-4 mt-2">
           <div className="flex items-center gap-2">
             <Avatar className="w-6 h-6">
@@ -74,14 +72,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <p className="text-sm">{university}</p>
           </div>
         </div>
-
-        {/* Stats & Actions */}
         <div className="mt-4 flex flex-wrap items-center gap-4 text-blue-600 text-sm">
           <p>{followers} followers</p>
           <p>{connections}+ connections</p>
         </div>
-
-        {/* Buttons */}
         <div className="mt-4 flex flex-wrap gap-2">
           <Button variant="default">Open to</Button>
           <Button variant="outline">
