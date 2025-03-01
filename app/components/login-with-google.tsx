@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { useRouter } from 'next/navigation'
 import { useApi } from "@/hooks/use-api";
 import {loginService} from "@/services/login-service"
+import { toast } from "sonner";
 
 export default function LoginWithgoogl() {
   const { handleGoogleSignIn} = useAuth();
@@ -15,12 +16,10 @@ export default function LoginWithgoogl() {
      }else{
       router.push("/register")
      } 
-      alert('Login successful!');
-      // Perform actions like navigating to another page, saving token, etc.
     },
     onError: (err) => {
       console.error('Login failed:', err);
-      alert('Login failed! Please check your credentials.');
+      toast.error("Error while login");
     },
   });
   const loginHandler = () =>{

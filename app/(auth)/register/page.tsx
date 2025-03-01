@@ -29,6 +29,7 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { registerService } from "@/services/register-service";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/use-api";
+import { toast } from "sonner";
 
 export default function Register() {
   const router = useRouter();
@@ -46,17 +47,19 @@ export default function Register() {
   });
   const { loading, execute } = useApi(registerService.registerUser, {
     onSuccess: (response) => {
-      // if (response && response.user) {
-      //   router.push("/admin");
-      // } else {
-      //   router.push("/register");
-      // }
       console.log('register res',response);
-      router.push("/admin");
+      toast.success("Register Successfully");
+      //check user type
+      if(response && response.user.userType=='CANDIDATE'){
+        router.push("/");
+      }else{
+        router.push("/admin");
+      }
+      
     },
     onError: (err) => {
       console.error("Login failed:", err);
-      alert("Login failed! Please check your credentials.");
+      toast.error("Failed to register");
     },
   });
   function onSubmit(values: z.infer<typeof registerSchema>) {
