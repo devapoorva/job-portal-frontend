@@ -10,7 +10,11 @@ export default function LoginWithgoogl() {
   const router = useRouter();
   const { data, error, loading, execute } = useApi(loginService.loginUser, {
     onSuccess: (response) => {
-      console.log('Login successful:', response,data);
+     if(response && response.user){
+        router.push('/admin')
+     }else{
+      router.push("/register")
+     } 
       alert('Login successful!');
       // Perform actions like navigating to another page, saving token, etc.
     },
@@ -25,7 +29,6 @@ export default function LoginWithgoogl() {
         //call login
       console.log(data.user?.accessToken,"---");
       execute({accessToken:data.user?.accessToken,refreshToken:data.user?.accessToken})
-      // router.push('/admin')
       }
       
     }).catch(err=>{

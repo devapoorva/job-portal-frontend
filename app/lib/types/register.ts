@@ -4,6 +4,6 @@ export type RegisterUser ={
     mobile: string
     email: string
     userType: string
-    cityId: number
+    cityId: string
     accessToken: string
 }
