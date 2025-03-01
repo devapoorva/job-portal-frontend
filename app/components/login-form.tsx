@@ -12,11 +12,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import LoginWithgoogl from "@/components/login-with-google";
 import {AuthContextProvider} from "@/lib/context/AuthContext";
+import { toast } from "sonner"
+
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
+  const loginHandler= ()=>{
+    toast.success("Success")
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -55,7 +60,7 @@ export function LoginForm({
                   </div>
                   <Input id="password" type="password" required />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" onClick={loginHandler}>
                   Login
                 </Button>
               </div>

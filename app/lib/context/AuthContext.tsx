@@ -13,7 +13,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: Error | null;
-  handleGoogleSignIn: () => Promise<void>;
+  handleGoogleSignIn: () => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -37,7 +37,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     setError(null); // Reset error before attempting sign-in
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      const res = await signInWithPopup(auth, new GoogleAuthProvider());
+      console.log("res",res);
+      return res;
     } catch (error) {
       setError(error as Error);
     } finally {
