@@ -6,4 +6,5 @@ export const registerSchema = z.object({
     mobile: z.string({required_error:""}).regex(/^\d{10}$/, "Invalid mobile number"),
     userType: z.string(),
     cityId: z.string(),
+    CountryCode:z.string().default("+91")
   });

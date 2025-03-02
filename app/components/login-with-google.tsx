@@ -12,14 +12,23 @@ export default function LoginWithgoogl() {
   const {  execute } = useApi(loginService.loginUser, {
     onSuccess: (response) => {
      if(response && response.user){
+      localStorage.setItem('_user',JSON.stringify(response.user));
+      if(response.user.userType=='EMPLOYER'){
         router.push('/admin')
+      }else if(response.user.userType=='ADMIN'){
+        router.push('/admin')
+      }else{
+        router.push('/')
+      }
      }else{
+      localStorage.removeItem('_user');
       router.push("/register")
      } 
     },
     onError: (err) => {
       console.error('Login failed:', err);
       toast.error("Error while login");
+      localStorage.removeItem('_user');
     },
   });
   const loginHandler = () =>{

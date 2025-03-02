@@ -32,6 +32,7 @@ http.interceptors.response.use(
     if (status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('_token');
+        localStorage.removeItem('_user');
         // Optionally redirect to login
         window.location.href = '/login';
       }

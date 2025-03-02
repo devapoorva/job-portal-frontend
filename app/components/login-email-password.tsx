@@ -22,15 +22,24 @@ function EmailPasswordLogin() {
   const router = useRouter();
   const { execute } = useApi(loginService.loginUser, {
     onSuccess: (res) => {
-      if (res && res.user && res.user.userType == "ADMIN") {
-        router.push("/admin");
+      if (res && res.user) {
+        localStorage.setItem('_user',JSON.stringify(res.user));
+        if(res.user.userType=='EMPLOYER'){
+          router.push('/admin')
+        }else if(res.user.userType=='ADMIN'){
+          router.push('/admin')
+        }else{
+          router.push('/')
+        }
       } else {
+        localStorage.removeItem('_user');
         router.push("/register");
       }
     },
     onError: (err) => {
       console.error("Login failed:", err);
       toast.error(err.message);
+      localStorage.removeItem('_user');
     },
   });
   const { emailPasswordSignIn, error } = useAuth();

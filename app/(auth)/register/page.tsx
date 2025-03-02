@@ -43,35 +43,41 @@ export default function Register() {
       mobile: "",
       cityId: "1",
       userType: "",
+      CountryCode:"+91"
     },
   });
-  const {  execute } = useApi(registerService.registerUser, {
-    onSuccess: (response) => {
-      console.log('register res',response);
+  const {  execute:registerUser } = useApi(registerService.registerUser, {
+    onSuccess: (res) => {
+      console.log('register res',res);
       toast.success("Register Successfully");
       //check user type
-      if(response && response.user.userType=='CANDIDATE'){
-        router.push("/");
-      }else{
-        router.push("/admin");
-      }
-      
+      if(res.isSuccess){
+        localStorage.setItem('_user',JSON.stringify(res.data));
+        if(res.data && res.data.userType=='ADMIN'){
+          router.push("/admin");
+        }else if(res.data.userType=='EMPLOYER'){
+          router.push("/admin");
+        }else{
+          router.push("/");
+        }
+      } 
     },
     onError: (err) => {
       console.error("Login failed:", err);
       toast.error("Failed to register");
+      localStorage.removeItem('_user');
     },
   });
   function onSubmit(values: z.infer<typeof registerSchema>) {
-    console.log(values, user?.accessToken);
-    execute({
+    registerUser({
       email: values.email,
       firstName: values.firstName,
       lastName: values.lastName,
       mobile: values.mobile,
       userType: values.userType,
       cityId: values.cityId,
-      accessToken: user?.accessToken,
+      accessToken: localStorage.getItem('_token')||'',
+      CountryCode:"+91"
     });
   }
   return (

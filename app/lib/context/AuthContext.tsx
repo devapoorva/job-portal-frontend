@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useMemo } from "react";
 import { 
   GoogleAuthProvider, 
   User, 
@@ -32,6 +32,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      console.log('currentUser',currentUser)
       setUser(currentUser);
       setLoading(false);
     });
@@ -44,7 +45,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     setError(null); 
     try {
       const res = await signInWithPopup(auth, new GoogleAuthProvider());
-      console.log("res",res);
       return res;
     } catch (error) {
       setError(error as Error);
@@ -57,7 +57,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     setError(null); 
     try {
       const res = await signInWithEmailAndPassword(auth,cred.email,cred.password);
-      console.log("res",res);
       return res;
     } catch (error) {
       setError(error as Error);
@@ -73,15 +72,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       await signOut(auth);
       setUser(null);
       localStorage.removeItem("_token");
+      localStorage.removeItem("_user");
     } catch (error) {
       setError(error as Error);
     } finally {
       setLoading(false);
     }
   };
-
+  const contextValue = useMemo(
+    () => ({ user, loading, error, logout, handleGoogleSignIn, emailPasswordSignIn }),
+    [user, loading, error]
+  );
   return (
-    <AuthContext.Provider value={{ user, loading, error, logout, handleGoogleSignIn,emailPasswordSignIn }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
