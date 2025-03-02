@@ -3,7 +3,7 @@ import { DataTable } from "@/components/shard/data-table";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { getColumns } from "./column";
-import { ChaptetType } from "@/lib/types/chapter";
+import { ChaptertDetailsType, ChaptetType } from "@/lib/types/chapter";
 import { CustomDialog } from "@/components/shard/custom-dialog";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -18,32 +18,64 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
+import { chapterService } from "@/services/chapter-service";
+import { useApi } from "@/hooks/use-api";
+import { zoneService } from "@/services/zone-service";
+import { ZoneType } from "@/lib/types/zone";
+import SingleSelect from "@/components/shard/single-select";
+import { toast } from "sonner";
 
 export default function Chapter() {
-  const [zones, setZones] = useState<ChaptetType[]>([
-    { id: 1, name: "Test", zone: "test zone" },
-  ]);
+  const [chapters, setChapter] = useState<ChaptertDetailsType[]>([]);
   const [isAdd, setIsAdd] = useState<boolean>(false);
-
+  const [zones, setZones] = useState<ZoneType[]>([]);
   const form = useForm<z.infer<typeof chapterSchema>>({
     resolver: zodResolver(chapterSchema),
     defaultValues: {
       name: "",
     },
   });
-
+  const { execute: fetchChapter } = useApi(chapterService.getChapters, {
+    immediate: true,
+    immediateParams: { pageNumber: 1, pageSize: 500 },
+    onSuccess: (res) => {
+      if (res.isSuccess) {
+        setChapter(res.data);
+      }
+    },
+    onError: (err) => {
+      console.error("Chapter load failed:", err);
+    },
+  });
+  useApi(zoneService.getZones, {
+    immediate: true,
+    immediateParams: { pageNumber: 1, pageSize: 500 },
+    onSuccess: (response) => {
+      setZones(response.data);
+    },
+    onError: (err) => {
+      console.error("Zone load failed:", err);
+    },
+  });
+  const { execute:saveChapter } = useApi(chapterService.saveChapter, {
+    onSuccess: (res) => {
+      if (res.isSuccess) {
+        // setZones([...chapters, res.data]);
+        fetchChapter({ pageNumber: 1, pageSize: 100 });
+        toast.success(res.message);
+        setIsAdd(false);
+      } else {
+        toast.success(res.message);
+      }
+    },
+    onError: (err) => {
+      console.error("Zone save failed:", err);
+    },
+  });
   function onSubmit(values: z.infer<typeof chapterSchema>) {
     console.log(values);
+    saveChapter({name:values.name,zoneId:values.zoneId,cityId:3})
     setIsAdd(false);
-    setZones([...zones,{id:zones.length+1,name:values.name,zone:values.zone}])
   }
 
   const handleEditClick = (chapter: ChaptetType) => {
@@ -67,7 +99,7 @@ export default function Chapter() {
       </div>
       <DataTable
         columns={getColumns(handleEditClick, handleDeleteClick)}
-        data={zones}
+        data={chapters}
       />
       <CustomDialog open={isAdd} title="Chapter" onOpenChange={setIsAdd}>
         <div>
@@ -78,7 +110,7 @@ export default function Chapter() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Zone</FormLabel>
+                    <FormLabel>Chapter</FormLabel>
                     <FormControl>
                       <Input placeholder="Chapter name" {...field} />
                     </FormControl>
@@ -86,30 +118,15 @@ export default function Chapter() {
                   </FormItem>
                 )}
               />
-              <FormField
+              <SingleSelect
                 control={form.control}
-                name="zone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Zone</FormLabel>
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="1">Chandighar</SelectItem>
-                        <SelectItem value="2">Delhi</SelectItem>
-                        <SelectItem value="3">Pune</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
+                options={zones}
+                name="zoneId"
+                label="Zone"
+                valueKey="id"
+                labelKey="name"
               />
-               
+
               <Button type="submit">Submit</Button>
             </form>
           </Form>
