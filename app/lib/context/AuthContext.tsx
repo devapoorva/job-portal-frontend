@@ -5,15 +5,21 @@ import {
   User, 
   onAuthStateChanged, 
   signInWithPopup, 
-  signOut 
+  signOut,
+  signInWithEmailAndPassword 
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+interface Login {
+  email:string;
+  password:string;
+}
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: Error | null;
-  handleGoogleSignIn: () => Promise<void>;
+  handleGoogleSignIn: () => Promise<any>;
+  emailPasswordSignIn: (cred:Login) => Promise<any>;
   logout: () => Promise<void>;
 }
 
@@ -35,9 +41,24 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    setError(null); // Reset error before attempting sign-in
+    setError(null); 
     try {
-      await signInWithPopup(auth, new GoogleAuthProvider());
+      const res = await signInWithPopup(auth, new GoogleAuthProvider());
+      console.log("res",res);
+      return res;
+    } catch (error) {
+      setError(error as Error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const emailPasswordSignIn = async (cred:Login) => {
+    setLoading(true);
+    setError(null); 
+    try {
+      const res = await signInWithEmailAndPassword(auth,cred.email,cred.password);
+      console.log("res",res);
+      return res;
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -51,6 +72,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       setUser(null);
+      localStorage.removeItem("_token");
     } catch (error) {
       setError(error as Error);
     } finally {
@@ -59,7 +81,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, logout, handleGoogleSignIn }}>
+    <AuthContext.Provider value={{ user, loading, error, logout, handleGoogleSignIn,emailPasswordSignIn }}>
       {children}
     </AuthContext.Provider>
   );

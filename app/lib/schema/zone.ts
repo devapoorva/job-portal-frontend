@@ -1,5 +1,6 @@
 import { z } from "zod";
 export const zoneSchema = z.object({
-    name: z.string({ required_error: "Zone name is required"}),
-    country: z.string({ required_error: "Country is required"}),
+    id:z.number().optional(),
+    name: z.string().min(1,"Name is required"),
+    CountryId: z.number({ required_error: "Country is required"}),
   });

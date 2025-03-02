@@ -2,13 +2,34 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/context/AuthContext";
 import { useRouter } from 'next/navigation'
+import { useApi } from "@/hooks/use-api";
+import {loginService} from "@/services/login-service"
+import { toast } from "sonner";
 
 export default function LoginWithgoogl() {
-  const { handleGoogleSignIn,  } = useAuth();
-  const router = useRouter()
+  const { handleGoogleSignIn} = useAuth();
+  const router = useRouter();
+  const {  execute } = useApi(loginService.loginUser, {
+    onSuccess: (response) => {
+     if(response && response.user){
+        router.push('/admin')
+     }else{
+      router.push("/register")
+     } 
+    },
+    onError: (err) => {
+      console.error('Login failed:', err);
+      toast.error("Error while login");
+    },
+  });
   const loginHandler = () =>{
-    handleGoogleSignIn().then(()=>{
-      router.push('/admin')
+    handleGoogleSignIn().then((data)=>{
+      if(data && data.user && data.user?.accessToken){
+        //call login
+      localStorage.setItem('_token',data.user?.accessToken);
+      execute({accessToken:data.user?.accessToken,refreshToken:data.user?.accessToken})
+      }
+      
     }).catch(err=>{
       console.log(err);
     })

@@ -3,13 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArchiveX, FilePenLine } from "lucide-react";
-import {ZoneType} from "@/lib/types/zone"
+import {ChaptetType} from "@/lib/types/chapter"
 
 
 export const getColumns = (
-  onEditClick: (user: ZoneType) => void,
+  onEditClick: (chapter: ChaptetType) => void,
   onDeleteClick: (id: number) => void
-): ColumnDef<ZoneType>[] => [
+): ColumnDef<ChaptetType>[] => [
   {
     accessorKey: "id",
     header: "Id",
@@ -19,8 +19,8 @@ export const getColumns = (
     header: "Name",
   },
   {
-    accessorKey: "countryId",
-    header: "Country",
+    accessorKey: "zone",
+    header: "Zone",
   },
   {
     id: "actions",
