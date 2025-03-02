@@ -19,7 +19,7 @@ export const getColumns = (
     header: "Name",
   },
   {
-    accessorKey: "country",
+    accessorKey: "countryId",
     header: "Country",
   },
   {

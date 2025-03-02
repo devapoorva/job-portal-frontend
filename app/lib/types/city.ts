@@ -21,3 +21,13 @@ export type CityType = {
     isDeleted: boolean
     country: string|null
   }
+
+  export type CityResponse ={
+    isSuccess: boolean
+    data: CityType[]
+    message: string
+    pageNumber: number
+    pageSize: number
+    totalRecords: number
+    totalPages: number
+  }

@@ -45,7 +45,7 @@ export default function Register() {
       userType: "",
     },
   });
-  const { loading, execute } = useApi(registerService.registerUser, {
+  const {  execute } = useApi(registerService.registerUser, {
     onSuccess: (response) => {
       console.log('register res',response);
       toast.success("Register Successfully");
