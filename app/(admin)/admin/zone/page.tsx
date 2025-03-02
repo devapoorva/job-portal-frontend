@@ -18,20 +18,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import SingleSelect from "@/components/shard/single-select";
+
+import { toast } from "sonner";
+import { zoneService } from "@/services/zone-service";
+import { useApi } from "@/hooks/use-api";
+const countries = [
+  { code: "us", name: "United States" },
+  { code: "ca", name: "Canada" },
+  { code: "fr", name: "France" },
+  { code: "de", name: "Germany" },
+];
 
 export default function Zone() {
   const [zones, setZones] = useState<ZoneType[]>([
     { id: 1, name: "Test", country: "test country" },
   ]);
   const [isAdd, setIsAdd] = useState<boolean>(false);
-
+  useApi(zoneService.getZones, {
+      immediate:true,
+      immediateParams:{pageNumber:1,pageSize:500},
+      onSuccess: (response) => {
+        setZones(response.data)
+      },
+      onError: (err) => {
+        console.error("Login failed:", err);
+        toast.error("Failed to register");
+      },
+    });
   const form = useForm<z.infer<typeof zoneSchema>>({
     resolver: zodResolver(zoneSchema),
     defaultValues: {
@@ -56,6 +70,7 @@ export default function Zone() {
     setIsAdd(true);
     form.reset();
   };
+
   return (
     <div className="px-1 py-1 w-full">
       <h1 className="text-xl font-medium">Zone</h1>
@@ -85,28 +100,13 @@ export default function Zone() {
                   </FormItem>
                 )}
               />
-              <FormField
+              <SingleSelect 
                 control={form.control}
+                options={countries}
                 name="country"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Country</FormLabel>
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a country" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="1">India</SelectItem>
-                        <SelectItem value="2">USA</SelectItem>
-                        <SelectItem value="3">China</SelectItem>
-                      </SelectContent>
-                    </Select>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Country"
+                valueKey="code"
+                labelKey="name"
               />
               <Button type="submit">Submit</Button>
             </form>

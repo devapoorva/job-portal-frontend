@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export default function LoginWithgoogl() {
   const { handleGoogleSignIn} = useAuth();
   const router = useRouter();
-  const { data, error, loading, execute } = useApi(loginService.loginUser, {
+  const {  execute } = useApi(loginService.loginUser, {
     onSuccess: (response) => {
      if(response && response.user){
         router.push('/admin')
@@ -26,7 +26,7 @@ export default function LoginWithgoogl() {
     handleGoogleSignIn().then((data)=>{
       if(data && data.user && data.user?.accessToken){
         //call login
-      console.log(data.user?.accessToken,"---");
+      localStorage.setItem('_token',data.user?.accessToken);
       execute({accessToken:data.user?.accessToken,refreshToken:data.user?.accessToken})
       }
       

@@ -12,7 +12,7 @@ const http = axios.create({
 
 http.interceptors.request.use(
   (config) => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    const token = typeof window !== 'undefined' ? localStorage.getItem('_token') : null;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -31,9 +31,9 @@ http.interceptors.response.use(
     const status = error.response?.status;
     if (status === 401) {
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
+        localStorage.removeItem('_token');
         // Optionally redirect to login
-        // window.location.href = '/login';
+        window.location.href = '/login';
       }
     }
     

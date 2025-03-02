@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback,useRef  } from 'react';
 import { AxiosError } from 'axios';
 
 interface UseApiOptions<T, P> {
@@ -15,6 +15,7 @@ export function useApi<T, P = void>(
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(options.immediate || false);
+  const executedRef = useRef(false);
 
   const execute = useCallback(async (params: P) => {
     setLoading(true);
@@ -36,10 +37,11 @@ export function useApi<T, P = void>(
   }, [apiCall, options]);
   
   useEffect(() => {
-    if (options.immediate && options.immediateParams !== undefined) {
+    if (options.immediate && options.immediateParams !== undefined && !executedRef.current) {
+      executedRef.current = true;
       execute(options.immediateParams);
     }
-  }, [execute, options.immediate, options.immediateParams]);
+  }, []);
   
   return { data, error, loading, execute, setData };
 }
